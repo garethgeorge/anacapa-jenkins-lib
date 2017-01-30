@@ -7,7 +7,7 @@ class Lib implements Serializable {
     script.sh "${args}"
   }
 
-  def parseJSON(text) {
+  static def parseJSON(text) {
     final slurper = new JsonSlurper()
     return new HashMap<>(slurper.parseText(text))
   }
