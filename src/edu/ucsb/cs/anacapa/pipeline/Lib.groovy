@@ -8,7 +8,7 @@ class Lib implements Serializable {
   }
 
   static def parseJSON(text) {
-    final slurper = new JsonSlurper()
+    final slurper = new JsonSlurperClassic()
     return new HashMap<>(slurper.parseText(text))
   }
 }
