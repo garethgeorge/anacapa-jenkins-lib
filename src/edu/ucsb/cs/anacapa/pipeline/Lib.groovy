@@ -21,4 +21,8 @@ class Lib implements Serializable {
       return json.toString()
     }
   }
+  
+  static def slugify(str) {
+    return str.replaceAll("[\\W]+", "-")
+  }
 }
