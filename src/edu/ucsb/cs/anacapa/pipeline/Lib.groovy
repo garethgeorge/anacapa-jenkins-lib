@@ -13,7 +13,12 @@ class Lib implements Serializable {
     return new HashMap<>(slurper.parseText(text))
   }
   
-  static def jsonString(obj) {
-    return new JsonBuilder(obj).toPrettyString()
+  static def jsonString(obj, pretty = false) {
+    def json = new JsonBuilder(obj)
+    if (pretty) {
+      return json.toPrettyString()
+    } else {
+      return json.toString()
+    }
   }
 }
