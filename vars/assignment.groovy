@@ -10,10 +10,13 @@ def call(body) {
 
   // now build, based on the configuration provided
   node {
+    step([$class: 'WsCleanup'])
     checkout(config)
     validateJSON(config)
     generateGrades(config)
     reportResults(config)
+    // clean up the workspace for the next build
+    step([$class: 'WsCleanup'])
   }
 }
 
@@ -21,7 +24,6 @@ def checkout(config) {
   /* Checkout from Source */
   stage ('Checkout') {
     // start with a clean workspace
-    step([$class: 'WsCleanup'])
     sh 'ls -al'
     checkout scm
     // save the current directory as the "fresh" start state
@@ -173,8 +175,6 @@ def reportResults(config) {
     // write out complete test results to a file and archive it
     sh "echo '${test_results_json}' > ${name}.json"
     archiveArtifacts artifacts: "${name}.json", fingerprint: true
-    // clean up the workspace for the next build
-    step([$class: 'WsCleanup'])
   }
 }
 
