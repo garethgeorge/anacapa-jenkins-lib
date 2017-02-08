@@ -1,29 +1,21 @@
 // vars/assignment.groovy
 import static edu.ucsb.cs.anacapa.pipeline.Lib.*
 
-def call(body) {
-  // evaluate the body block, and collect configuration into the object
-  def config = [:]
-  body.resolveStrategy = Closure.DELEGATE_FIRST
-  body.delegate = config
-  body()
-
-  // now build, based on the configuration provided
+def call(String spec_file) {
   node {
-    step([$class: 'WsCleanup'])
-    checkout(config)
-    validateJSON(config)
-    generateGrades(config)
-    reportResults(config)
-    // clean up the workspace for the next build
-    step([$class: 'WsCleanup'])
+    checkout()
+    validateJSON(spec_file)
+    def assignment = parseJSON(readFile(spec_file))
+    generateGrades(assignment)
+    reportResults(assignment)
   }
 }
 
-def checkout(config) {
+def checkout() {
   /* Checkout from Source */
   stage ('Checkout') {
     // start with a clean workspace
+    step([$class: 'WsCleanup'])
     sh 'ls -al'
     checkout scm
     // save the current directory as the "fresh" start state
@@ -31,22 +23,22 @@ def checkout(config) {
   }
 }
 
-def validateJSON(config) {
+def validateJSON(String spec_file) {
   /* Make sure the assignment spec conforms to the proper conventions */
   stage('validateJSON') {
-    config.assignment = parseJSON(readFile(config.assignment_spec))
+    def assignment = parseJSON(readFile(spec_file))
     // TODO: insert validation step here...
     //    * This allows us to guarantee that the object has certain properties
-    if (config.assignment == null) { sh 'fail' }
+    if (assignment == null) { sh 'fail' }
   }
 }
 
-def generateGrades(config) {
+def generateGrades(assignment) {
   /* Generate the build stages to run the tests */
   stage('Generate Testing Stages') {
     // def branches = [:]
     /* for each test group */
-    def testables = config.assignment['testables']
+    def testables = assignment['testables']
     for (int index = 0; index < testables.size(); index++) {
       def i = index
       def curtest = testables[index]
@@ -153,9 +145,9 @@ def run_test_case(testable, test_case) {
   }
 }
 
-def reportResults(config) {
+def reportResults(assignment) {
   stage('Report Results') {
-    def testables = config.assignment.testables
+    def testables = assignment.testables
     for (int index = 0; index < testables.size(); index++) {
       def i = index
       def curtest = testables[index]
@@ -175,6 +167,8 @@ def reportResults(config) {
     // write out complete test results to a file and archive it
     sh "echo '${test_results_json}' > ${name}.json"
     archiveArtifacts artifacts: "${name}.json", fingerprint: true
+    // clean up the workspace for the next build
+    step([$class: 'WsCleanup'])
   }
 }
 
