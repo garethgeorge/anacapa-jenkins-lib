@@ -148,6 +148,11 @@ def run_test_case(testable, test_case) {
 def reportResults(assignment) {
   stage('Report Results') {
     def testables = assignment.testables
+    def test_results = [
+      assignment_name: assignment['assignment_name'],
+      repo: env.JOB_NAME,
+      results: []
+    ]
     for (int index = 0; index < testables.size(); index++) {
       def i = index
       def curtest = testables[index]
