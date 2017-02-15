@@ -1,12 +1,18 @@
 folder("Anacapa Grader/${course_org}")
-pipelineJob("Anacapa Grader/${course_org}/graderGen") {
-  parameters {
-    stringParam('lab_name', '', 'The name of the lab to grade')
+pipelineJob("Anacapa Grader/${course_org}/assignment-${lab_name}") {
+  scm {
+    git {
+	    remote {
+        github("${github_org}/assignment-${lab_name}")
+        credentials("${credentials_id}")
+      }
+    }
   }
   environmentVariables {
     envs(
       course_org: "${course_org}",
-      credentials_id: "${credentials_id}"
+      credentials_id: "${credentials_id}",
+      lab_name: "${lab_name}"
     )
   }
   definition {
