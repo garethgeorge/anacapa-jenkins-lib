@@ -4,7 +4,10 @@ job('Anacapa Grader/setupCourse') {
     stringParam('course_org', '', 'The course github organization')
     stringParam('credentials_id', 'github_ncbrown1', 'The identifier of the credentials needed to check out the git repository (note: if using ssh url for git, the credentials will need to be Username + Private Key, otherwise only https is allowed)')
   }
+  scm {
+    github('project-anacapa/anacapa-jenkins-lib')
+  }
   steps {
-    dsl(['assignmentGen.groovy', 'graderGen.groovy'], 'DELETE')
+    dsl(['jobs/assignmentGen.groovy', 'jobs/graderGen.groovy'], 'DELETE')
   }
 }
