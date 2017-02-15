@@ -15,10 +15,10 @@ pipelineJob("Anacapa Grader/${course_org}/grader-${lab_name}") {
       script('''
       @Library('anacapa-jenkins-lib') _
       runGrader {
-        course_org = build.environment.get("course_org")
-        credentials_id = build.environment.get("credentials_id")
-        lab_name = build.environment.get("lab_name")
-        github_user = build.environment.get("github_user")
+        course_org = env.course_org
+        credentials_id = env.credentials_id
+        lab_name = env.lab_name
+        github_user = env.github_user
       }
 	    '''.stripIndent())
       sandbox()
