@@ -3,7 +3,7 @@ pipelineJob("Anacapa Grader/${course_org}/assignment-${lab_name}") {
   scm {
     git {
 	    remote {
-        github("${github_org}/assignment-${lab_name}")
+        github("${course_org}/assignment-${lab_name}")
         credentials("${credentials_id}")
       }
     }
