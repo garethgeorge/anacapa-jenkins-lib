@@ -19,6 +19,7 @@ pipelineJob("Anacapa Grader/${course_org}/graderGen") {
         }
       }
 	    ''')
+      sandbox()
     }
   }
 }
