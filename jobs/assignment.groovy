@@ -24,7 +24,7 @@ pipelineJob("Anacapa Grader/${course_org}/assignment-${lab_name}") {
         credentials_id = build.environment.get("credentials_id")
         lab_name = build.environment.get("lab_name")
       }
-	    ''')
+	    '''.stripIndent())
       sandbox()
     }
   }
