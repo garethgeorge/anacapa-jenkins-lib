@@ -1,5 +1,5 @@
 folder("Anacapa Grader/${course_org}")
-job("Anacapa Grader/${course_org}/assignmentGen") {
+pipelineJob("Anacapa Grader/${course_org}/assignmentGen") {
   parameters {
     stringParam('lab_name', '', 'The name of the lab to create')
   }
@@ -9,8 +9,16 @@ job("Anacapa Grader/${course_org}/assignmentGen") {
       credentials_id: "${credentials_id}"
     )
   }
-  steps {
-    shell 'echo "Hello World Master!'
-    shell 'env'
+  definition {
+    cps {
+      script('''
+      node {
+        stage('Hello World') {
+          sh 'Hello World!'
+          sh 'env'
+        }
+      }
+	    ''')
+    }
   }
 }
