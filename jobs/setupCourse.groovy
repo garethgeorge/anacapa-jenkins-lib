@@ -12,6 +12,6 @@ job('Anacapa Grader/setupCourse') {
     github('project-anacapa/anacapa-jenkins-lib')
   }
   steps {
-    dsl('jobs/setupAssignment.groovy', 'DELETE')
+    dsl(['jobs/setupAssignment.groovy'], 'DELETE')
   }
 }
