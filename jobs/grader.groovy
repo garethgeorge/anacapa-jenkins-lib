@@ -20,6 +20,13 @@ pipelineJob("Anacapa Grader/${course_org}/grader-${lab_name}") {
         lab_name = "${lab_name}"
         github_user = "${github_user}"
       }
+
+      println(currentBuild)
+      node {
+        stage('Hello') {
+          sh 'env'
+        }
+      }
 	    '''.stripIndent())
       sandbox()
     }
