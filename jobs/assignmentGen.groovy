@@ -14,7 +14,7 @@ pipelineJob("Anacapa Grader/${course_org}/assignmentGen") {
       script('''
       node {
         stage('Hello World') {
-          sh 'Hello World!'
+          sh 'echo "Hello World!"'
           sh 'env'
         }
       }
