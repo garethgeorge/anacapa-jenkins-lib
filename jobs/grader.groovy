@@ -23,8 +23,10 @@ pipelineJob("Anacapa Grader/${course_org}/grader-${lab_name}") {
 
       node {
           sh 'env > .env.txt'
-          readFile('.env.txt').split("\\r?\\n").each {
-              println it
+          def evars = readFile('.env.txt').split("\\r?\\n")
+          for (int index = 0; index < evars.size(); index++) {
+              def i = index
+              println evars[i]
           }
       }
 	    '''.stripIndent())
