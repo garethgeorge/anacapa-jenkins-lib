@@ -1,5 +1,5 @@
 folder("Anacapa Grader/${course_org}")
-pipelineJob("Anacapa Grader/${course_org}/graderGen") {
+job("Anacapa Grader/${course_org}/graderGen") {
   parameters {
     stringParam('lab_name', '', 'The name of the lab to grade')
   }
@@ -10,7 +10,7 @@ pipelineJob("Anacapa Grader/${course_org}/graderGen") {
     )
   }
   steps {
-    shell 'bash -c "echo \\\"Hello World Grader!\\\""'
-    shell 'bash -c "env"'
+    shell 'echo "Hello World Master!'
+    shell 'env'
   }
 }
