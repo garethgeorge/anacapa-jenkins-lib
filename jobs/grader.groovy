@@ -13,11 +13,12 @@ pipelineJob("Anacapa Grader/${course_org}/grader-${lab_name}") {
   definition {
     cps {
       script('''
-      node {
-        stage('Hello World') {
-          sh 'echo "Grading $course_org/$lab_name-$github_user"'
-          sh 'env'
-        }
+      @Library('anacapa-jenkins-lib') _
+      runGrader {
+        course_org = build.environment.get("course_org")
+        credentials_id = build.environment.get("credentials_id")
+        lab_name = build.environment.get("lab_name")
+        github_user = build.environment.get("github_user")
       }
 	    ''')
       sandbox()

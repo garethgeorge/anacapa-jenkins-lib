@@ -18,11 +18,11 @@ pipelineJob("Anacapa Grader/${course_org}/assignment-${lab_name}") {
   definition {
     cps {
       script('''
-      node {
-        stage('Hello World') {
-          sh 'echo "Hello World!"'
-          sh 'env'
-        }
+      @Library('anacapa-jenkins-lib') _
+      runAssignment {
+        course_org = build.environment.get("course_org")
+        credentials_id = build.environment.get("credentials_id")
+        lab_name = build.environment.get("lab_name")
       }
 	    ''')
       sandbox()
