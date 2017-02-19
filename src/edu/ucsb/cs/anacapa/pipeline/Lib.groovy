@@ -29,7 +29,6 @@ class Lib implements Serializable {
   static def get_envvars(script) {
     def evars = [:]
     script.sh 'env > .env.tmp'
-    script.sh 'cat .env.tmp'
     def evars_list = script.readFile('.env.tmp') =~ /([^={}]+)=((\(\)\s*\{[^\{\}]+\}\s*)|(.+)\s*|(\s*))/
     for (int index=0; index < evars_list.size(); index++) {
         def i = index
