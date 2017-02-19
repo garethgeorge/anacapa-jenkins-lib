@@ -19,10 +19,15 @@ pipelineJob("Anacapa Grader/${course_org}/assignment-${lab_name}") {
     cps {
       script('''
       @Library('anacapa-jenkins-lib') _
-      runAssignment {
-        course_org = "${course_org}"
-        credentials_id = "${credentials_id}"
-        lab_name = "${lab_name}"
+      import static edu.ucsb.cs.anacapa.pipeline.Lib.*
+
+      node {
+        def evars = get_envvars this
+        runAssignment {
+          course_org = "${course_org}"
+          credentials_id = "${credentials_id}"
+          lab_name = "${lab_name}"
+        }
       }
 	    '''.stripIndent())
       sandbox()

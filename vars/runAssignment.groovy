@@ -6,13 +6,12 @@ def call(body) {
     body.delegate = config
     body()
 
-    def cfgstr = jsonString(config)
+    def course_org = config.course_org.trim()
+    def lab_name = config.lab_name.trim()
 
     node {
         stage('Hello World') {
-            sh "echo ${cfgstr}"
-            sh 'echo "Hello World!"'
-            sh 'env'
+            sh "echo 'Creating/Updating ${course_org}/assignment-${lab_name}'"
         }
     }
 }
