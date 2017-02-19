@@ -7,12 +7,15 @@ def call(body) {
     body()
 
     def cfgstr = jsonString(config)
+    def course_org = config.course_org.trim()
+    def lab_name = config.lab_name.trim()
+    def github_user = config.github_user.trim()
 
     node {
         stage('Hello World') {
             sh "echo ${cfgstr}"
-            sh "echo \"Grading ${config.course_org}/${config.lab_name}-${config.github_user}\""
-            sh 'env'
+            sh "echo \"Grading ${course_org}/${lab_name}-${github_user}\""
+            // sh 'env'
         }
     }
 }
