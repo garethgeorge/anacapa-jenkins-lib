@@ -26,8 +26,9 @@ class Lib implements Serializable {
     return str.replaceAll("[\\W]+", "-")
   }
 
-  static def envvars(script) {
+  static def get_envvars(script) {
     script.sh 'env > .env.tmp'
+    script.sh 'cat .env.tmp'
     def evars_list = script.readFile('.env.tmp').split("\\r?\\n")
     script.sh 'rm .env.tmp'
     def evars = [:]
