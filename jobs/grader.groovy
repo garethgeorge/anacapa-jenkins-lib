@@ -14,6 +14,7 @@ pipelineJob("Anacapa Grader/${course_org}/grader-${lab_name}") {
     cps {
       script('''
       @Library('anacapa-jenkins-lib') _
+      @Library('anacapa-jenkins-lib') import edu.ucsb.cs.anacapa.pipeline.Lib.*
       runGrader {
         course_org = "${course_org}"
         credentials_id = "${credentials_id}"
@@ -22,12 +23,8 @@ pipelineJob("Anacapa Grader/${course_org}/grader-${lab_name}") {
       }
 
       node {
-          sh 'env > .env.txt'
-          def evars = readFile('.env.txt').split("\\r?\\n")
-          for (int index = 0; index < evars.size(); index++) {
-              def i = index
-              println evars[i]
-          }
+        def evars = envvars this
+        println(evars)
       }
 	    '''.stripIndent())
       sandbox()
