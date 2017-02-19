@@ -13,18 +13,15 @@ pipelineJob("Anacapa Grader/${course_org}/grader-${lab_name}") {
   definition {
     cps {
       script('''
-      // @Library('anacapa-jenkins-lib') _
+      @Library('anacapa-jenkins-lib') _
       @Library('anacapa-jenkins-lib') import static edu.ucsb.cs.anacapa.pipeline.Lib.*
-      // runGrader {
-      //   course_org = "${course_org}"
-      //   credentials_id = "${credentials_id}"
-      //   lab_name = "${lab_name}"
-      //   github_user = "${github_user}"
-      // }
 
-      node {
-        def evars = get_envvars this
-        println(evars)
+      def evars = get_envvars this
+      runGrader {
+        course_org = "${evars['course_org']}"
+        credentials_id = "${evars['credentials_id']}"
+        lab_name = "${evars['lab_name']}"
+        github_user = "${evars['github_user']}"
       }
 	    '''.stripIndent())
       sandbox()
