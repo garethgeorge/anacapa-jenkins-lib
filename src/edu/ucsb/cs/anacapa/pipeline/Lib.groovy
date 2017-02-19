@@ -30,7 +30,7 @@ class Lib implements Serializable {
     script.sh 'env > .env.tmp'
     script.sh 'cat .env.tmp'
     def evars_list = script.readFile('.env.tmp').split("\\r?\\n")
-    script.sh 'rm .env.tmp'
+    // script.sh 'rm .env.tmp'
     def evars = [:]
     for (int index = 0; index < evars.size(); index++) {
         def i = index
