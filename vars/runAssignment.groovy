@@ -96,7 +96,7 @@ def run_test_group(testable) {
       for (int i = 0; i < testable.test_cases.size(); i++) {
         def index = i
         def expected = testable.test_cases[index]['expected']
-        def output_name = solution_output_name(testable, test_case)
+        def output_name = solution_output_name(testable, testable.test_cases[index])
         // if we needed to generate, fail because that's not possible.
         if (expected.equals('generate')) { sh 'fail' }
         save_result("cat ${expected}", output_name)
