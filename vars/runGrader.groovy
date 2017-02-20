@@ -13,9 +13,11 @@ def call(body) {
     def assignment = [:]
 
     node {
+
         stage('Hello World') {
             sh "echo \"Grading ${course_org}/${lab_name}-${github_user}\""
         }
+
         stage("Checkout Assignment Reference Repo") {
           // start with a clean workspace
           step([$class: 'WsCleanup'])
@@ -28,6 +30,7 @@ def call(body) {
             ]
           ])
         }
+
         stage("Stash reference data") {
           assignment = parseJSON(readFile("assignment_spec.json"))
           stash name: "assignment_spec", includes: "assignment_spec.json"
@@ -73,8 +76,35 @@ def call(body) {
             }
           }
         }
-        stage("Look around") {
-          sh 'ls -al'
+
+        stage('Report Results') {
+          def testables = assignment.testables
+          def test_results = [
+            assignment_name: assignment['assignment_name'],
+            repo: env.JOB_NAME,
+            results: []
+          ]
+          for (int index = 0; index < testables.size(); index++) {
+            def i = index
+            def curtest = testables[index]
+            // gather the partial results from this testable
+            unstash "${slugify(curtest.test_name)}_results"
+            def tmp_results = readFile(
+              temp_results_file_for(curtest.test_name)
+            ).split("\r?\n")
+            for(int j = 0; j < tmp_results.size(); j++) {
+              def realj = j
+              test_results.results << parseJSON(tmp_results[j])
+            }
+          }
+          def name = slugify("${env.JOB_NAME}_test_results")
+          def test_results_json = jsonString(test_results, pretty=true)
+          println(test_results_json)
+          // write out complete test results to a file and archive it
+          sh "echo '${test_results_json}' > ${name}.json"
+          archiveArtifacts artifacts: "${name}.json", fingerprint: true
+          // clean up the workspace for the next build
+          step([$class: 'WsCleanup'])
         }
     }
 }
@@ -169,6 +199,12 @@ def run_test_case(testable, test_case) {
 
     // remove test data
     dir("resources") { deleteDir() }
+    dir("resources") {
+      dir("expected_outputs") {
+        // get the expected outputs folder contents
+        unstash 'expected_outputs'
+      }
+    }
 
     if (test_case['expected'].equals('generate')) {
       // TODO: figure out how/when to generate the expected outputs
@@ -180,6 +216,8 @@ def run_test_case(testable, test_case) {
 
       def diff_cmd = "diff ${output_name} ${test_case['expected']} > ${output_name}.diff"
       def ret = sh returnStatus: true, script: diff_cmd
+      // remove expected outputs data
+      dir("resources") { deleteDir() }
 
       sh "cat ${output_name}.diff"
       if (ret != 0) {
