@@ -45,10 +45,12 @@ def call(body) {
             }
             dir("expected_outputs") {
               sh 'touch .keep'
+              copy_solution_artifacts(course_org, lab_name, assignment)
               stash name: "expected_outputs"
             }
           }
         }
+
         stage("Clean WS, Checkout ${course_org}/${lab_name}-${github_user}") {
           // start with a clean workspace
           step([$class: 'WsCleanup'])
@@ -63,6 +65,7 @@ def call(body) {
           // save the current directory as the "fresh" start state
           stash name: 'fresh'
         }
+
         /* Generate the build stages to run the tests */
         stage('Generate Testing Stages') {
           /* for each test group */
@@ -109,6 +112,28 @@ def call(body) {
     }
 }
 
+def solution_output_name(testable, test_case) {
+  return slugify("${testable.test_name}_${test_case.command}_solution")
+}
+
+def copy_solution_artifacts(course_org, lab_name, assignment) {
+  def master_project = "Anacapa Grader/${course_org}/assignment-${lab_name}"
+  def testables = assignment['testables']
+  // for each testable
+  for (int index = 0; index < testables.size(); index++) {
+    def i = index
+    def testable = testables[i]
+    // for each test case in this testable
+    for (int jindex = 0; jindex < testable.test_cases.size(); jindex++) {
+      def j = jindex
+      def solution_name = solution_output_name(testable, testable.test_cases[j])
+      // copy over the solution artifact
+      step ([$class: 'CopyArtifact',
+              projectName: master_project,
+              filter: solution_name])
+    }
+  }
+}
 
 def temp_results_file_for(name) {
   return ".anacapa.tmp_results_${slugify(name)}"
@@ -205,25 +230,23 @@ def run_test_case(testable, test_case) {
         unstash 'expected_outputs'
       }
     }
+    def solution_name = solution_output_name(testable, test_case)
+    def solution_file = "resources/expected_outputs/${solution_name}"
 
-    if (test_case['expected'].equals('generate')) {
-      // TODO: figure out how/when to generate the expected outputs
-    } else {
-      def diff_source = test_case.diff_source
-      if (diff_source.equals('stdout')) {
-        diff_source = output_name
-      }
+    def diff_source = test_case.diff_source
+    if (diff_source.equals('stdout')) {
+      diff_source = output_name
+    }
 
-      def diff_cmd = "diff ${output_name} ${test_case['expected']} > ${output_name}.diff"
-      def ret = sh returnStatus: true, script: diff_cmd
-      // remove expected outputs data
-      dir("resources") { deleteDir() }
+    def diff_cmd = "diff ${output_name} ${solution_file} > ${output_name}.diff"
+    def ret = sh returnStatus: true, script: diff_cmd
+    // remove expected outputs data
+    dir("resources") { deleteDir() }
 
-      sh "cat ${output_name}.diff"
-      if (ret != 0) {
-        score = 0
-        archiveArtifacts artifacts: "${output_name}.diff", fingerprint: true
-      }
+    sh "cat ${output_name}.diff"
+    if (ret != 0) {
+      score = 0
+      archiveArtifacts artifacts: "${output_name}.diff", fingerprint: true
     }
   } catch (e) {
     println("Failed to run test case")
