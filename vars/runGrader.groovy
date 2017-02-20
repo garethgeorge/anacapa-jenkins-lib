@@ -14,7 +14,7 @@ def call(body) {
 
     node {
 
-        stage('Hello World') {
+        stage('Start runGrader') {
             sh "echo \"Grading ${course_org}/${lab_name}-${github_user}\""
         }
 

@@ -10,7 +10,7 @@ def call(body) {
     def lab_name = config.lab_name.trim()
 
     node {
-        stage('Hello World') {
+        stage('Start runAssignment') {
             sh "echo 'Creating/Updating ${course_org}/assignment-${lab_name}'"
         }
     }
