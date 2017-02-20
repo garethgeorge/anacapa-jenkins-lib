@@ -59,7 +59,6 @@ def solution_output_name(testable, test_case) {
 }
 
 def save_result(command, output_name) {
-  def output_name = solution_output_name(testable, testable.test_cases[index])
   sh "${command} > ${output_name}"
   archiveArtifacts artifacts: "${output_name}", fingerprint: true
 }
