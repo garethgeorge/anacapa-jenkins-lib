@@ -28,9 +28,20 @@ def call(body) {
           ])
         }
         stage("Stash reference data") {
-          stash name: "build_data", includes: "resources/build_data/*"
-          stash name: "test_data", includes: "resources/test_data/*"
-          stash name: "expected_outputs", includes: "resources/expected_outputs/*"
+          dir("resources") {
+            dir("build_data") {
+              sh 'touch .keep'
+              stash name: "build_data"
+            }
+            dir("test_data") {
+              sh 'touch .keep'
+              stash name: "test_data"
+            }
+            dir("expected_outputs") {
+              sh 'touch .keep'
+              stash name: "expected_outputs"
+            }
+          }
         }
         stage("Clean WS, Checkout ${course_org}/${lab_name}-${github_user}") {
           // start with a clean workspace
