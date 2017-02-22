@@ -3,7 +3,7 @@ job('Anacapa Grader/setupCourse') {
   parameters {
     stringParam('course_org_url', '', '''
       The URL of your course's github organization, github enterprise organization,
-      or gitlab group. (should begin with `https://`)
+      or gitlab group. (the HTTPS url, without the `https://`)
     '''.stripIndent())
     credentialsParam('credentials_id') {
         required()

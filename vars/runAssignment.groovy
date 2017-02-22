@@ -24,7 +24,7 @@ def call(body) {
         $class: 'GitSCM',
         branches: [[name: '*/master']],
         userRemoteConfigs: [
-          [url:"${course_org_url}/assignment-${lab_name}.git"],
+          [url:"https://${course_org_url}/assignment-${lab_name}.git"],
           [credentialsId:"${credentials_id}"]
         ]
       ])
