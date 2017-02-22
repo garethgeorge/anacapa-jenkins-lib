@@ -232,7 +232,7 @@ def run_test_case(testable, test_case) {
       }
     }
     def solution_name = solution_output_name(testable, test_case)
-    def solution_file = "resources/expected_outputs/${solution_name}"
+    def solution_file = ".anacapa/expected_outputs/${solution_name}"
 
     def diff_source = test_case.diff_source
     if (diff_source.equals('stdout')) {
