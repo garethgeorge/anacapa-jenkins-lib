@@ -18,6 +18,6 @@ job("AnacapaGrader/${git_provider_domain}/${course_org}/setupAssignment") {
     )
   }
   steps {
-    dsl(['jobs/assignment.groovy', 'jobs/grader.groovy'], 'DELETE')
+    dsl(['jobs/assignment.groovy', 'jobs/grader.groovy'], 'IGNORE')
   }
 }
