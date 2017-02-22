@@ -32,9 +32,9 @@ def call(body) {
         }
 
         stage("Stash reference data") {
-          assignment = parseJSON(readFile("assignment_spec.json"))
-          stash name: "assignment_spec", includes: "assignment_spec.json"
-          dir("resources") {
+          dir(".anacapa") {
+            assignment = parseJSON(readFile("assignment_spec.json"))
+            stash name: "assignment_spec", includes: "assignment_spec.json"
             dir("build_data") {
               sh 'touch .keep'
               stash name: "build_data"
@@ -164,7 +164,7 @@ def run_test_group(testable) {
 
     /* Try to build the binaries for the current test group */
     try {
-      dir("resources") {
+      dir(".anacapa") {
         dir("build_data") {
           // unstash the build data
           unstash 'build_data'
@@ -173,7 +173,7 @@ def run_test_group(testable) {
       // execute the desired build command
       sh testable.build_command
       // remove build data
-      dir("resources") { deleteDir() }
+      dir(".anacapa") { deleteDir() }
       // save this state so each individual test case can run independently
       stash name: testable.test_name
     } catch (e) {
@@ -212,7 +212,7 @@ def run_test_case(testable, test_case) {
     // refresh the workspace to facilitate test case independence
     step([$class: 'WsCleanup'])
     unstash name: testable.test_name
-    dir("resources") {
+    dir(".anacapa") {
       dir("test_data") {
         // get the test_data folder contents
         unstash 'test_data'
@@ -223,8 +223,8 @@ def run_test_case(testable, test_case) {
     sh "${test_case.command} > ${output_name}"
 
     // remove test data
-    dir("resources") { deleteDir() }
-    dir("resources") {
+    dir(".anacapa") { deleteDir() }
+    dir(".anacapa") {
       dir("expected_outputs") {
         // get the expected outputs folder contents
         unstash 'expected_outputs'
@@ -241,7 +241,7 @@ def run_test_case(testable, test_case) {
     def diff_cmd = "diff ${output_name} ${solution_file} > ${output_name}.diff"
     def ret = sh returnStatus: true, script: diff_cmd
     // remove expected outputs data
-    dir("resources") { deleteDir() }
+    dir(".anacapa") { deleteDir() }
 
     sh "cat ${output_name}.diff"
     if (ret != 0) {

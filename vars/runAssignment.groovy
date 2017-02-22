@@ -9,7 +9,7 @@ def call(body) {
   def course_org = config.course_org.trim()
   def lab_name = config.lab_name.trim()
   def credentials_id = config.credentials_id.trim()
-  def spec_file = "assignment_spec.json"
+  def spec_file = ".anacapa/assignment_spec.json"
   def assignment = [:]
 
   node {
