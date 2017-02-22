@@ -6,7 +6,7 @@ def call(body) {
     body.delegate = config
     body()
 
-    def course_org = config.course_org.trim()
+    def course_org_url = config.course_org_url.trim()
     def lab_name = config.lab_name.trim()
     def github_user = config.github_user.trim()
     def credentials_id = config.credentials_id.trim()
@@ -15,7 +15,7 @@ def call(body) {
     node {
 
         stage('Start runGrader') {
-            sh "echo \"Grading ${course_org}/${lab_name}-${github_user}\""
+            sh "echo \"Grading ${course_org_url}/${lab_name}-${github_user}\""
         }
 
         stage("Checkout Assignment Reference Repo") {
@@ -25,7 +25,7 @@ def call(body) {
             $class: 'GitSCM',
             branches: [[name: '*/master']],
             userRemoteConfigs: [
-              [url:"https://github.com/${course_org}/assignment-${lab_name}.git"],
+              [url:"${course_org_url}/assignment-${lab_name}.git"],
               [credentialsId:"${credentials_id}"]
             ]
           ])
@@ -45,20 +45,20 @@ def call(body) {
             }
             dir("expected_outputs") {
               sh 'touch .keep'
-              copy_solution_artifacts(course_org, lab_name, assignment)
+              copy_solution_artifacts(course_org_url, lab_name, assignment)
               stash name: "expected_outputs"
             }
           }
         }
 
-        stage("Clean WS, Checkout ${course_org}/${lab_name}-${github_user}") {
+        stage("Clean WS, Checkout ${course_org_url}/${lab_name}-${github_user}") {
           // start with a clean workspace
           step([$class: 'WsCleanup'])
           checkout([
             $class: 'GitSCM',
             branches: [[name: '*/master']],
             userRemoteConfigs: [
-              [url:"https://github.com/${course_org}/${lab_name}-${github_user}.git"],
+              [url:"https://github.com/${course_org_url}/${lab_name}-${github_user}.git"],
               [credentialsId:"${credentials_id}"]
             ]
           ])
@@ -116,8 +116,8 @@ def solution_output_name(testable, test_case) {
   return slugify("${testable.test_name}_${test_case.command}_solution")
 }
 
-def copy_solution_artifacts(course_org, lab_name, assignment) {
-  def master_project = "Anacapa Grader/${course_org}/assignment-${lab_name}"
+def copy_solution_artifacts(course_org_url, lab_name, assignment) {
+  def master_project = "Anacapa Grader/${course_org_url}/assignment-${lab_name}"
   def testables = assignment['testables']
   // for each testable
   for (int index = 0; index < testables.size(); index++) {

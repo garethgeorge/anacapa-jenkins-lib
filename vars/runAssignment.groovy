@@ -6,7 +6,7 @@ def call(body) {
   body.delegate = config
   body()
 
-  def course_org = config.course_org.trim()
+  def course_org_url = config.course_org_url.trim()
   def lab_name = config.lab_name.trim()
   def credentials_id = config.credentials_id.trim()
   def spec_file = ".anacapa/assignment_spec.json"
@@ -14,7 +14,7 @@ def call(body) {
 
   node {
     stage('Start runAssignment') {
-      sh "echo 'Creating/Updating ${course_org}/assignment-${lab_name}'"
+      sh "echo 'Creating/Updating ${course_org_url}/assignment-${lab_name}'"
     }
 
     stage("Checkout Assignment Reference Repo") {
@@ -24,7 +24,7 @@ def call(body) {
         $class: 'GitSCM',
         branches: [[name: '*/master']],
         userRemoteConfigs: [
-          [url:"https://github.com/${course_org}/assignment-${lab_name}.git"],
+          [url:"${course_org_url}/assignment-${lab_name}.git"],
           [credentialsId:"${credentials_id}"]
         ]
       ])

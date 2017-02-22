@@ -1,16 +1,16 @@
-folder("Anacapa Grader/${course_org}")
-pipelineJob("Anacapa Grader/${course_org}/assignment-${lab_name}") {
+folder("Anacapa Grader/${course_org_url}")
+pipelineJob("Anacapa Grader/${course_org_url}/assignment-${lab_name}") {
   scm {
     git {
 	    remote {
-        github("${course_org}/assignment-${lab_name}")
+        url("${course_org_url}/assignment-${lab_name}.git")
         credentials("${credentials_id}")
       }
     }
   }
   environmentVariables {
     envs(
-      course_org: "${course_org}",
+      course_org_url: "${course_org_url}",
       credentials_id: "${credentials_id}",
       lab_name: "${lab_name}"
     )
@@ -24,7 +24,7 @@ pipelineJob("Anacapa Grader/${course_org}/assignment-${lab_name}") {
       node {
         def evars = get_envvars this
         runAssignment {
-          course_org = "${evars['course_org']}"
+          course_org_url = "${evars['course_org_url']}"
           credentials_id = "${evars['credentials_id']}"
           lab_name = "${evars['lab_name']}"
         }
