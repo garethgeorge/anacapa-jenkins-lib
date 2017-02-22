@@ -4,7 +4,7 @@ job("Anacapa Grader/${course_org_url}/setupAssignment") {
     stringParam('lab_name', '', '''
       The name of the lab to create (corresponding to an existing git repository
       with name `assignment-${lab_name}`)
-    '''.stripIndent)
+    '''.stripIndent())
   }
   scm {
     github('project-anacapa/anacapa-jenkins-lib')
