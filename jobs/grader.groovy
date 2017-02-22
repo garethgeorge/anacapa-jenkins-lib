@@ -1,5 +1,5 @@
-folder("Anacapa Grader/${course_org_url}")
-pipelineJob("Anacapa Grader/${course_org_url}/grader-${lab_name}") {
+folder("AnacapaGrader/${course_org_url}")
+pipelineJob("AnacapaGrader/${course_org_url}/grader-${lab_name}") {
   parameters {
     stringParam('github_user', '', 'The github username(s) of the student(s)')
   }

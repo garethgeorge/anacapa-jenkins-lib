@@ -117,7 +117,7 @@ def solution_output_name(testable, test_case) {
 }
 
 def copy_solution_artifacts(course_org_url, lab_name, assignment) {
-  def master_project = "Anacapa Grader/${course_org_url}/assignment-${lab_name}"
+  def master_project = "AnacapaGrader/${course_org_url}/assignment-${lab_name}"
   def testables = assignment['testables']
   // for each testable
   for (int index = 0; index < testables.size(); index++) {

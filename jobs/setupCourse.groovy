@@ -1,5 +1,5 @@
-folder('Anacapa Grader')
-job('Anacapa Grader/setupCourse') {
+folder('AnacapaGrader')
+job('AnacapaGrader/setupCourse') {
   parameters {
     stringParam('course_org_url', '', '''
       The URL of your course's github organization, github enterprise organization,
