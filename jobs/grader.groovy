@@ -1,11 +1,13 @@
-folder("AnacapaGrader/${course_org_url}")
-pipelineJob("AnacapaGrader/${course_org_url}/grader-${lab_name}") {
+folder("AnacapaGrader/${git_provider_domain}")
+folder("AnacapaGrader/${git_provider_domain}/${course_org}")
+pipelineJob("AnacapaGrader/${git_provider_domain}/${course_org}/grader-${lab_name}") {
   parameters {
     stringParam('github_user', '', 'The github username(s) of the student(s)')
   }
   environmentVariables {
     envs(
-      course_org_url: "${course_org_url}",
+      git_provider_domain: "${git_provider_domain}",
+      course_org: "${course_org}",
       credentials_id: "${credentials_id}",
       lab_name: "${lab_name}"
     )
@@ -19,7 +21,8 @@ pipelineJob("AnacapaGrader/${course_org_url}/grader-${lab_name}") {
       node {
         def evars = get_envvars this
         runGrader {
-          course_org_url = "${evars['course_org_url']}"
+          git_provider_domain = "${evars['git_provider_domain']}"
+          course_org = "${evars['course_org']}"
           credentials_id = "${evars['credentials_id']}"
           lab_name = "${evars['lab_name']}"
           github_user = "${evars['github_user']}"

@@ -1,5 +1,6 @@
-folder("AnacapaGrader/${course_org_url.replaceAll(/\//, "\\/")}")
-job("AnacapaGrader/${course_org_url.replaceAll(/\//, "\\/")}/setupAssignment") {
+folder("AnacapaGrader/${git_provider_domain}")
+folder("AnacapaGrader/${git_provider_domain}/${course_org}")
+job("AnacapaGrader/${git_provider_domain}/${course_org}/setupAssignment") {
   parameters {
     stringParam('lab_name', '', '''
       The name of the lab to create (corresponding to an existing git repository
@@ -11,7 +12,8 @@ job("AnacapaGrader/${course_org_url.replaceAll(/\//, "\\/")}/setupAssignment") {
   }
   environmentVariables {
     envs(
-      course_org_url: "${course_org_url}",
+      git_provider_domain: "${git_provider_domain}",
+      course_org: "${course_org}",
       credentials_id: "${credentials_id}"
     )
   }

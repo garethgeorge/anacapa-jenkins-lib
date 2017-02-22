@@ -1,9 +1,13 @@
 folder('AnacapaGrader')
 job('AnacapaGrader/setupCourse') {
   parameters {
-    stringParam('course_org_url', '', '''
-      The URL of your course's github organization, github enterprise organization,
-      or gitlab group. (the HTTPS url, without the `https://`)
+    stringParam('git_provider_domain', 'github.com', '''
+      The domain of your HTTPS git provider, such as github.com or gitlab.com or
+      github.ucsb.edu.
+    '''.stripIndent())
+    stringParam('course_org', '', '''
+      The name of your course's github organization, github enterprise organization,
+      or gitlab group.
     '''.stripIndent())
     credentialsParam('credentials_id') {
         required()
