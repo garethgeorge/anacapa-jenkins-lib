@@ -1,5 +1,5 @@
-folder("AnacapaGrader/${course_org_url}")
-job("AnacapaGrader/${course_org_url}/setupAssignment") {
+folder("AnacapaGrader/${course_org_url.replaceAll(/\//, "\\/")}")
+job("AnacapaGrader/${course_org_url.replaceAll(/\//, "\\/")}/setupAssignment") {
   parameters {
     stringParam('lab_name', '', '''
       The name of the lab to create (corresponding to an existing git repository
