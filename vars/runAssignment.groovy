@@ -21,14 +21,14 @@ def call(body) {
     stage("Checkout Assignment Reference Repo") {
       // start with a clean workspace
       step([$class: 'WsCleanup'])
-      checkout([
+      checkout scm: [
         $class: 'GitSCM',
-        branches: [[name: '*/master']],
-        userRemoteConfigs: [
-          [url:"http://${git_provider_domain}/${course_org}/assignment-${lab_name}.git"],
-          [credentialsId:"${credentials_id}"]
-        ]
-      ])
+        branches: [[name: "**/master"]],
+        userRemoteConfigs: [[
+          url:"http://${git_provider_domain}/${course_org}/assignment-${lab_name}.git",
+		      credentialsId: "${credentials_id}",
+        ]]
+      ]
       stash name: 'fresh'
     }
 

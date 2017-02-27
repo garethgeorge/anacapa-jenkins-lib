@@ -22,14 +22,14 @@ def call(body) {
         stage("Checkout Assignment Reference Repo") {
           // start with a clean workspace
           step([$class: 'WsCleanup'])
-          checkout([
+          checkout scm: [
             $class: 'GitSCM',
-            branches: [[name: '*/master']],
-            userRemoteConfigs: [
-              [url:"http://${git_provider_domain}/${course_org}/assignment-${lab_name}.git"],
-              [credentialsId:"${credentials_id}"]
-            ]
-          ])
+            branches: [[name: "**/master"]],
+            userRemoteConfigs: [[
+              url:"http://${git_provider_domain}/${course_org}/assignment-${lab_name}.git",
+    		      credentialsId: "${credentials_id}",
+            ]]
+          ]
         }
 
         stage("Stash reference data") {
@@ -55,14 +55,14 @@ def call(body) {
         stage("Clean WS, Checkout ${git_provider_domain}/${course_org}/${lab_name}-${github_user}") {
           // start with a clean workspace
           step([$class: 'WsCleanup'])
-          checkout([
+          checkout scm: [
             $class: 'GitSCM',
-            branches: [[name: '*/master']],
-            userRemoteConfigs: [
-              [url:"http://${git_provider_domain}/${course_org}/${lab_name}-${github_user}.git"],
-              [credentialsId:"${credentials_id}"]
-            ]
-          ])
+            branches: [[name: "**/master"]],
+            userRemoteConfigs: [[
+              url:"http://${git_provider_domain}/${course_org}/${lab_name}-${github_user}.git",
+    		      credentialsId: "${credentials_id}",
+            ]]
+          ]
           // save the current directory as the "fresh" start state
           stash name: 'fresh'
         }
