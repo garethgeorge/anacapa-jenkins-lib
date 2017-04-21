@@ -5,6 +5,22 @@ The lifecycle of the Jenkins portion of Project Anacapa is as follows:
 
 TODO: Write documentation on how to create initial `installAnacapa` job that generates the `AnacapaGrader/` folder and `AnacapaGrader/setupCourse` job
 
+# INFO
+
+This library utilizes the [Jenkins Job DSL Plugin](https://github.com/jenkinsci/job-dsl-plugin) in order to generate various Jenkins Jobs
+needed for auto-grading for the [Anacapa System](https://github.com/project-anacapa).
+
+Some Jenkins Dependencies:
+
+- Jenkins itself
+- This shared library
+- [Job DSL Plugin](https://github.com/jenkinsci/job-dsl-plugin)
+- [Folders Plugin](https://plugins.jenkins.io/cloudbees-folder)
+- [GitHub Plugin](https://plugins.jenkins.io/github)
+- [SSH Slaves Plugin](https://plugins.jenkins.io/ssh-slaves)
+- [Copy Artifacts Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin)
+- [Credentials Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Plugin)
+- [Workspace Cleanup Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Workspace+Cleanup+Plugin)
 
 ## AnacapaGrader/setupCourse
 
