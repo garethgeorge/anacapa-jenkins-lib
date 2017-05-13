@@ -1,6 +1,6 @@
-folder("AnacapaGrader/${git_provider_domain}")
-folder("AnacapaGrader/${git_provider_domain}/${course_org}")
-pipelineJob("AnacapaGrader/${git_provider_domain}/${course_org}/assignment-${lab_name}") {
+// folder("AnacapaGrader/${git_provider_domain}")
+// folder("AnacapaGrader/${git_provider_domain}/${course_org}")
+pipelineJob("AnacapaGrader-${git_provider_domain}-${course_org}-assignment-${lab_name}") {
   scm {
     git {
 	    remote {
