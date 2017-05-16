@@ -1,6 +1,6 @@
-folder("AnacapaGrader/${git_provider_domain}")
-folder("AnacapaGrader/${git_provider_domain}/${course_org}")
-pipelineJob("AnacapaGrader/${git_provider_domain}/${course_org}/grader-${lab_name}") {
+// folder("AnacapaGrader/${git_provider_domain}")
+// folder("AnacapaGrader/${git_provider_domain}/${course_org}")
+pipelineJob("AnacapaGrader ${git_provider_domain} ${course_org} grader-${lab_name}") {
   parameters {
     stringParam('github_user', '', 'The github username(s) of the student(s)')
   }

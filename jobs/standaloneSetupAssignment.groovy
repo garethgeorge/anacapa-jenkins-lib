@@ -21,6 +21,7 @@ job("AnacapaGrader-setupAssignment") {
     github('project-anacapa/anacapa-jenkins-lib')
   }
   steps {
+    // trigger the standalone assignment and standalone grader creation
     dsl(['jobs/assignment.groovy', 'jobs/grader.groovy'], 'IGNORE')
   }
 }
