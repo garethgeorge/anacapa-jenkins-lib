@@ -215,24 +215,18 @@ def run_test_case(testable, test_case) {
     // refresh the workspace to facilitate test case independence
     step([$class: 'WsCleanup'])
     unstash name: testable.test_name
-    dir(".anacapa") {
-      dir("test_data") {
-        // get the test_data folder contents
-        unstash 'test_data'
-      }
-    }
+
+    // get the test_data folder contents
+    unstash 'test_data'
+
     // save the output for this test case
     def output_name = slugify("${testable.test_name}_${test_case.command}_output")
     sh "${test_case.command} > ${output_name}"
+    // done running student code.
 
-    // remove test data
-    dir(".anacapa") { deleteDir() }
-    dir(".anacapa") {
-      dir("expected_outputs") {
-        // get the expected outputs folder contents
-        unstash 'expected_outputs'
-      }
-    }
+    // get the expected outputs folder contents
+    unstash 'expected_outputs'
+
     def solution_name = solution_output_name(testable, test_case)
     def solution_file = ".anacapa/expected_outputs/${solution_name}"
 
@@ -243,8 +237,7 @@ def run_test_case(testable, test_case) {
 
     def diff_cmd = "diff ${output_name} ${solution_file} > ${output_name}.diff"
     def ret = sh returnStatus: true, script: diff_cmd
-    // remove expected outputs data
-    dir(".anacapa") { deleteDir() }
+
 
     sh "cat ${output_name}.diff"
     if (ret != 0) {
@@ -257,5 +250,6 @@ def run_test_case(testable, test_case) {
     score = 0 // fail
   } finally {
     save_temp_result(testable, test_case, score)
+    step([$class: 'WsCleanup'])
   }
 }
