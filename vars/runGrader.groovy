@@ -180,7 +180,7 @@ def run_test_group(testable) {
     } finally {
       // remove build data
       sh 'xargs rm < _build_files'
-      def _ = sh returnStatus: true, script: sh 'rm _fresh_w_build _build_files'
+      def _ = sh returnStatus: true, script: 'rm _fresh_w_build _build_files'
       // new state is fresh state + compiled targets
       // save this state so each individual test case can run independently
       stash name: testable.test_name
