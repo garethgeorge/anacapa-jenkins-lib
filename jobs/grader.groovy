@@ -27,7 +27,7 @@ pipelineJob("AnacapaGrader ${git_provider_domain} ${course_org} grader-${lab_nam
           credentials_id = "${evars['credentials_id']}"
           lab_name = "${evars['lab_name']}"
           github_user = "${evars['github_user']}"
-          commit: "${evars['commit']}"
+          commit = "${evars['commit']}"
         }
       }
 	    '''.stripIndent())
