@@ -11,6 +11,7 @@ def call(body) {
     def lab_name = config.lab_name.trim()
     def github_user = config.github_user.trim()
     def credentials_id = config.credentials_id.trim()
+    def commit = config.commit.trim()
     def assignment = [:]
 
     node {
@@ -57,7 +58,7 @@ def call(body) {
           step([$class: 'WsCleanup'])
           checkout scm: [
             $class: 'GitSCM',
-            branches: [[name: "**/master"]],
+            branches: [[name: "${commit}"]],
             userRemoteConfigs: [[
               url:"http://${git_provider_domain}/${course_org}/${lab_name}-${github_user}.git",
     		      credentialsId: "${credentials_id}",
