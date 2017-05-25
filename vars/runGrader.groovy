@@ -165,9 +165,9 @@ def run_test_group(testable) {
 
     /* Try to build the binaries for the current test group */
     try {
-      sh 'find . -print > _fresh'
+      sh 'find . -print | sort > _fresh'
       unstash 'build_data'
-      sh 'find . -print > _fresh_w_build'
+      sh 'find . -print | sort > _fresh_w_build'
       sh 'comm -13 _fresh _fresh_w_build > _build_files'
 
       // execute the desired build command
@@ -180,7 +180,7 @@ def run_test_group(testable) {
     } finally {
       // remove build data
       sh 'xargs rm < _build_files'
-      sh 'rm _fresh_w_build _build_files'
+      def _ = sh returnStatus: true, script: sh 'rm _fresh_w_build _build_files'
       // new state is fresh state + compiled targets
       // save this state so each individual test case can run independently
       stash name: testable.test_name
