@@ -118,7 +118,7 @@ def solution_output_name(testable, test_case) {
 }
 
 def copy_solution_artifacts(git_provider_domain, course_org, lab_name, assignment) {
-  def master_project = "AnacapaGrader/${git_provider_domain}/${course_org}/assignment-${lab_name}"
+  def master_project = "AnacapaGrader ${git_provider_domain} ${course_org} assignment-${lab_name}"
   def testables = assignment['testables']
   // for each testable
   for (int index = 0; index < testables.size(); index++) {
@@ -165,23 +165,25 @@ def run_test_group(testable) {
 
     /* Try to build the binaries for the current test group */
     try {
-      dir(".anacapa") {
-        dir("build_data") {
-          // unstash the build data
-          unstash 'build_data'
-        }
-      }
+      sh 'find . -print > _fresh'
+      unstash 'build_data'
+      sh 'find . -print > _fresh_w_build'
+      sh 'comm -13 _fresh _fresh_w_build > _build_files'
+
       // execute the desired build command
       sh testable.build_command
-      // remove build data
-      dir(".anacapa") { deleteDir() }
-      // save this state so each individual test case can run independently
-      stash name: testable.test_name
     } catch (e) {
       // if something went wrong building this test case, assume all
       // test cases will fail
       built = false
       println(e)
+    } finally {
+      // remove build data
+      sh 'xargs rm < _build_files'
+      sh 'rm _fresh_w_build _build_files'
+      // new state is fresh state + compiled targets
+      // save this state so each individual test case can run independently
+      stash name: testable.test_name
     }
 
     if (built) {
