@@ -29,6 +29,21 @@ def call(body) {
 		      credentialsId: "${credentials_id}",
         ]]
       ]
+
+      dir(".anacapa") {
+        dir("build_data") {
+          sh 'touch .keep'
+          stash name: "build_data"
+        }
+        dir("test_data") {
+          sh 'touch .keep'
+          stash name: "test_data"
+        }
+        dir("expected_outputs") {
+          sh 'touch .keep'
+          stash name: "expected_outputs"
+        }
+      }
       stash name: 'fresh'
     }
 
@@ -75,7 +90,7 @@ def run_test_group(testable) {
 
     /* Try to build the binaries for the current test group */
     try {
-      sh 'cp .anacapa/build_data/* .'
+      unstash 'build_data'
       // execute the desired build command
       sh testable.build_command
       // save this state so each individual test case can run independently
@@ -101,6 +116,7 @@ def run_test_group(testable) {
         def output_name = solution_output_name(testable, testable.test_cases[index])
         // if we needed to generate, fail because that's not possible.
         if (expected.equals('generate')) { sh 'fail' }
+        unstash 'expected_outputs'
         save_result("cat ${expected}", output_name)
       }
     }
@@ -119,9 +135,10 @@ def run_test_case(testable, test_case) {
     def output_name = solution_output_name(testable, test_case)
 
     if (expected.equals('generate')) {
-      sh 'cp .anacapa/test_data/* .'
+      unstash 'test_data'
       save_result(test_case.command, output_name)
     } else {
+      unstash 'expected_outputs'
       save_result("cat ${expected}", output_name)
     }
   } catch (e) {
