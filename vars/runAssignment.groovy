@@ -75,6 +75,7 @@ def run_test_group(testable) {
 
     /* Try to build the binaries for the current test group */
     try {
+      sh 'cp .anacapa/build_data/* .'
       // execute the desired build command
       sh testable.build_command
       // save this state so each individual test case can run independently
@@ -96,7 +97,7 @@ def run_test_group(testable) {
       println("Build Failed...")
       for (int i = 0; i < testable.test_cases.size(); i++) {
         def index = i
-        def expected = testable.test_cases[index]['expected']
+        def expected = testable.test_cases[index]['expected'] - ".anacapa/expected_outputs/"
         def output_name = solution_output_name(testable, testable.test_cases[index])
         // if we needed to generate, fail because that's not possible.
         if (expected.equals('generate')) { sh 'fail' }
@@ -113,11 +114,12 @@ def run_test_case(testable, test_case) {
     // refresh the workspace to facilitate test case independence
     step([$class: 'WsCleanup'])
     unstash name: testable.test_name
-    def expected = test_case['expected']
+    def expected = test_case['expected'] - ".anacapa/expected_outputs/"
     // save the output for this test case
     def output_name = solution_output_name(testable, test_case)
 
     if (expected.equals('generate')) {
+      sh 'cp .anacapa/test_data/* .'
       save_result(test_case.command, output_name)
     } else {
       save_result("cat ${expected}", output_name)
