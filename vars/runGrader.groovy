@@ -147,7 +147,11 @@ def save_temp_result(testable, test_case, score) {
     score: score,
     max_score: test_case['points']
   ])
+
+  unstash "${slugify(testable.test_name)}_results"
+  // stash the partial results so the master can gather them all in the end
   sh "echo '${jstr}' >> ${temp_results_file_for(testable['test_name'])}"
+  stash includes: temp_results_file_for(testable.test_name), name: "${slugify(testable.test_name)}_results"
 }
 
 
@@ -186,6 +190,10 @@ def run_test_group(testable) {
       stash name: testable.test_name
     }
 
+    // make sure the temporary results file exists and is stashed but empty
+    sh "touch ${temp_results_file_for(testable['test_name'])}"
+    stash includes: temp_results_file_for(testable.test_name), name: "${slugify(testable.test_name)}_results"
+
     if (built) {
       println("Successfully built!")
       for (int i = 0; i < testable.test_cases.size(); i++) {
@@ -200,8 +208,6 @@ def run_test_group(testable) {
       }
     }
 
-    // stash the partial results so the master can gather them all in the end
-    stash includes: temp_results_file_for(testable.test_name), name: "${slugify(testable.test_name)}_results"
   }
 }
 
