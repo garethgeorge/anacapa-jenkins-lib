@@ -85,7 +85,7 @@ def call(body) {
           def testables = assignment.testables
           def test_results = [
             assignment_name: assignment['assignment_name'],
-            repo: env.JOB_NAME,
+            repo: "${course_org}/${lab_name}-${github_user}",
             results: []
           ]
           for (int index = 0; index < testables.size(); index++) {
@@ -101,7 +101,7 @@ def call(body) {
               test_results.results << parseJSON(tmp_results[j])
             }
           }
-          def name = slugify("${env.JOB_NAME}_test_results")
+          def name = slugify("${lab_name}-${github_user}_test_results")
           def test_results_json = jsonString(test_results, pretty=true)
           println(test_results_json)
           // write out complete test results to a file and archive it
