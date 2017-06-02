@@ -15,6 +15,11 @@ pipelineJob("AnacapaGrader ${git_provider_domain} ${course_org} assignment-${lab
       lab_name: "${lab_name}"
     )
   }
+  notifications {
+    endpoint(callback_url) {
+      event('finalized')
+    }
+  }
   definition {
     cps {
       script('''

@@ -1,5 +1,9 @@
 job("AnacapaGrader-setupAssignment") {
   parameters {
+    stringParam('callback_url', '', '''
+      The URL that will be notified once the job has finished and complete all
+      post-build activities, such as generating artifacts.
+    '''.stripIndent())
     stringParam('git_provider_domain', 'github.com', '''
       The domain of your HTTPS git provider, such as github.com or gitlab.com or
       github.ucsb.edu.
