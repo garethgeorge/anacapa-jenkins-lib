@@ -16,7 +16,7 @@ pipelineJob("AnacapaGrader ${git_provider_domain} ${course_org} assignment-${lab
     )
   }
   notifications {
-    endpoint(callback_url) {
+    endpoint("${callback_url}") {
       event('finalized')
     }
   }
