@@ -12,7 +12,8 @@ pipelineJob("AnacapaGrader ${git_provider_domain} ${course_org} assignment-${lab
       git_provider_domain: "${git_provider_domain}",
       course_org: "${course_org}",
       credentials_id: "${credentials_id}",
-      lab_name: "${lab_name}"
+      lab_name: "${lab_name}",
+      callback_url: "${callback_url}"
     )
   }
   notifications {
