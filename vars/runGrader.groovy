@@ -15,11 +15,12 @@ def call(body) {
     def assignment = [:]
 
     node {
-
         stage('Start runGrader') {
             sh "echo \"Grading ${git_provider_domain}/${course_org}/${lab_name}-${github_user}\""
         }
+    }
 
+    node('submit') {
         stage("Checkout Assignment Reference Repo") {
           // start with a clean workspace
           step([$class: 'WsCleanup'])
@@ -36,15 +37,19 @@ def call(body) {
         stage("Stash reference data") {
           dir(".anacapa") {
             assignment = parseJSON(readFile("assignment_spec.json"))
+            // save off the assignment_spec
             stash name: "assignment_spec", includes: "assignment_spec.json"
+            // save off build data
             dir("build_data") {
               sh 'touch .keep'
               stash name: "build_data"
             }
+            // save off test data
             dir("test_data") {
               sh 'touch .keep'
               stash name: "test_data"
             }
+            // save off expected outputs
             dir("expected_outputs") {
               sh 'touch .keep'
               copy_solution_artifacts(git_provider_domain, course_org, lab_name, assignment)
@@ -68,49 +73,49 @@ def call(body) {
           stash name: 'fresh'
         }
 
-        /* Generate the build stages to run the tests */
-        stage('Generate Testing Stages') {
-          /* for each test group */
-          def testables = assignment['testables']
-          for (int index = 0; index < testables.size(); index++) {
-            def i = index
-            def curtest = testables[index]
-            /* create a parallel group */
-            stage(curtest['test_name']) {
-              run_test_group(curtest)
-            }
+        /* for each test group */
+        def testables = assignment['testables']
+        for (int index = 0; index < testables.size(); index++) {
+          def i = index
+          def curtest = testables[index]
+
+          run_test_group(curtest)
+        }
+    }
+
+    node {
+      stage('Report Results') {
+        def testables = assignment.testables
+        // initial JSON result object
+        def test_results = [
+          assignment_name: assignment['assignment_name'],
+          repo: "${course_org}/${lab_name}-${github_user}",
+          results: []
+        ]
+        // for each testable, unstash the results and put them in the final obj
+        for (int index = 0; index < testables.size(); index++) {
+          def i = index
+          def curtest = testables[index]
+          // gather the partial results from this testable
+          unstash "${slugify(curtest.test_name)}_results"
+          def tmp_results = readFile(
+            temp_results_file_for(curtest.test_name)
+          ).split("\r?\n")
+          for(int j = 0; j < tmp_results.size(); j++) {
+            def realj = j
+            test_results.results << parseJSON(tmp_results[j])
           }
         }
 
-        stage('Report Results') {
-          def testables = assignment.testables
-          def test_results = [
-            assignment_name: assignment['assignment_name'],
-            repo: "${course_org}/${lab_name}-${github_user}",
-            results: []
-          ]
-          for (int index = 0; index < testables.size(); index++) {
-            def i = index
-            def curtest = testables[index]
-            // gather the partial results from this testable
-            unstash "${slugify(curtest.test_name)}_results"
-            def tmp_results = readFile(
-              temp_results_file_for(curtest.test_name)
-            ).split("\r?\n")
-            for(int j = 0; j < tmp_results.size(); j++) {
-              def realj = j
-              test_results.results << parseJSON(tmp_results[j])
-            }
-          }
-          def name = slugify("${lab_name}-${github_user}_test_results")
-          def test_results_json = jsonString(test_results, pretty=true)
-          println(test_results_json)
-          // write out complete test results to a file and archive it
-          sh "echo '${test_results_json}' > ${name}.json"
-          archiveArtifacts artifacts: "${name}.json", fingerprint: true
-          // clean up the workspace for the next build
-          step([$class: 'WsCleanup'])
-        }
+        def name = slugify("${lab_name}-${github_user}_test_results")
+        def test_results_json = jsonString(test_results, pretty=true)
+        println(test_results_json)
+        // write out complete test results to a file and archive it
+        sh "echo '${test_results_json}' > ${name}.json"
+        archiveArtifacts artifacts: "${name}.json", fingerprint: true
+        // clean up the workspace for the next build
+        step([$class: 'WsCleanup'])
+      }
     }
 }
 
@@ -157,7 +162,7 @@ def save_temp_result(testable, test_case, score) {
 
 
 def run_test_group(testable) {
-  node('submit') {
+  stage(testable['test_name']) {
     // assume built at first
     def built = true
     // clean up the workspace for this particular test group and start fresh
@@ -208,7 +213,6 @@ def run_test_group(testable) {
         save_temp_result(testable, testable.test_cases[index], 0)
       }
     }
-
   }
 }
 

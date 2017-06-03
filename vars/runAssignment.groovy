@@ -17,7 +17,9 @@ def call(body) {
     stage('Start runAssignment') {
       sh "echo 'Creating/Updating ${git_provider_domain}/${course_org}/assignment-${lab_name}'"
     }
+  }
 
+  node('submit') {
     stage("Checkout Assignment Reference Repo") {
       // start with a clean workspace
       step([$class: 'WsCleanup'])
@@ -55,18 +57,13 @@ def call(body) {
       if (assignment == null) { sh 'fail' }
     }
 
-    /* Generate the build stages to run the tests */
-    stage('Generate Testing Stages') {
-      /* for each test group */
-      def testables = assignment['testables']
-      for (int index = 0; index < testables.size(); index++) {
-        def i = index
-        def curtest = testables[index]
-        /* create a parallel group */
-        stage(curtest['test_name']) {
-          run_test_group(curtest)
-        }
-      }
+    /* for each test group */
+    def testables = assignment['testables']
+    for (int index = 0; index < testables.size(); index++) {
+      def i = index
+      def curtest = testables[index]
+
+      run_test_group(curtest)
     }
   }
 }
@@ -81,7 +78,7 @@ def save_result(command, output_name) {
 }
 
 def run_test_group(testable) {
-  node('submit') {
+  stage(testable['test_name']) {
     // assume built at first
     def built = true
     // clean up the workspace for this particular test group and start fresh
