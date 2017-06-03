@@ -107,12 +107,11 @@ def call(body) {
           }
         }
 
-        def name = slugify("${lab_name}-${github_user}_test_results")
         def test_results_json = jsonString(test_results, pretty=true)
         println(test_results_json)
         // write out complete test results to a file and archive it
-        sh "echo '${test_results_json}' > ${name}.json"
-        archiveArtifacts artifacts: "${name}.json", fingerprint: true
+        sh "echo '${test_results_json}' > grade.json"
+        archiveArtifacts artifacts: "grade.json", fingerprint: true
         // clean up the workspace for the next build
         step([$class: 'WsCleanup'])
       }
