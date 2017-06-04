@@ -30,7 +30,10 @@ pipelineJob("AnacapaGrader ${git_provider_domain} ${course_org} assignment-${lab
       @Library('anacapa-jenkins-lib') _
       import static edu.ucsb.cs.anacapa.pipeline.Lib.*
 
-      def evars = get_envvars this
+      def evars = [:]
+      node {
+        get_envvars this
+      }
       runAssignment {
         git_provider_domain = "${evars['git_provider_domain']}"
         course_org = "${evars['course_org']}"
