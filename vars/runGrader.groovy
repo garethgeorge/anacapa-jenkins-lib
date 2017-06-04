@@ -193,7 +193,7 @@ def run_test_group(testable) {
       def _ = sh returnStatus: true, script: 'rm _fresh_w_build _build_files'
       // new state is fresh state + compiled targets
       // save this state so each individual test case can run independently
-      stash name: testable.test_name
+      stash name: slugify(testable.test_name)
     }
 
     // make sure the temporary results file exists and is stashed but empty
@@ -225,7 +225,7 @@ def run_test_case(testable, test_case) {
   try {
     // refresh the workspace to facilitate test case independence
     step([$class: 'WsCleanup'])
-    unstash name: testable.test_name
+    unstash name: slugify(testable.test_name)
 
     // get the test_data folder contents
     unstash 'test_data'

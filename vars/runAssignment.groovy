@@ -91,7 +91,7 @@ def run_test_group(testable) {
       // execute the desired build command
       sh testable.build_command
       // save this state so each individual test case can run independently
-      stash name: testable.test_name
+      stash name: slugify(testable.test_name)
     } catch (e) {
       // if something went wrong building this test case, assume all
       // test cases will fail
@@ -126,7 +126,7 @@ def run_test_case(testable, test_case) {
   try {
     // refresh the workspace to facilitate test case independence
     step([$class: 'WsCleanup'])
-    unstash name: testable.test_name
+    unstash name: unstash(testable.test_name)
     def expected = test_case['expected'] - ".anacapa/expected_outputs/"
     // save the output for this test case
     def output_name = solution_output_name(testable, test_case)
