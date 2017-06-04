@@ -14,6 +14,7 @@ pipelineJob("AnacapaGrader ${git_provider_domain} ${course_org} grader-${lab_nam
       callback_url: "${callback_url}"
     )
   }
+  logRotator(numToKeep = 100)
   notifications {
     endpoint("${callback_url}") {
       event('finalized')
@@ -25,16 +26,14 @@ pipelineJob("AnacapaGrader ${git_provider_domain} ${course_org} grader-${lab_nam
       @Library('anacapa-jenkins-lib') _
       import static edu.ucsb.cs.anacapa.pipeline.Lib.*
 
-      node {
-        def evars = get_envvars this
-        runGrader {
-          git_provider_domain = "${evars['git_provider_domain']}"
-          course_org = "${evars['course_org']}"
-          credentials_id = "${evars['credentials_id']}"
-          lab_name = "${evars['lab_name']}"
-          github_user = "${evars['github_user']}"
-          commit = "${evars['commit']}"
-        }
+      def evars = get_envvars this
+      runGrader {
+        git_provider_domain = "${evars['git_provider_domain']}"
+        course_org = "${evars['course_org']}"
+        credentials_id = "${evars['credentials_id']}"
+        lab_name = "${evars['lab_name']}"
+        github_user = "${evars['github_user']}"
+        commit = "${evars['commit']}"
       }
 	    '''.stripIndent())
       sandbox()
