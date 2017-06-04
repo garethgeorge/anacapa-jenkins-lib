@@ -16,6 +16,9 @@ pipelineJob("AnacapaGrader ${git_provider_domain} ${course_org} assignment-${lab
       callback_url: "${callback_url}"
     )
   }
+  logRotator {
+    numToKeep(20)
+  }
   notifications {
     endpoint("${callback_url}") {
       event('finalized')
