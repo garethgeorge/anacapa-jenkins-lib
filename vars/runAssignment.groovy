@@ -106,7 +106,7 @@ def run_test_group(testable) {
         run_test_case(testable, testable.test_cases[index])
       }
     } else {
-      println("Build Failed...")
+      println("Build Failed... Checking for expectd output file")
       for (int i = 0; i < testable.test_cases.size(); i++) {
         def index = i
         def expected = testable.test_cases[index]['expected'] - ".anacapa/expected_outputs/"
@@ -141,5 +141,9 @@ def run_test_case(testable, test_case) {
   } catch (e) {
     println("Failed to run test case")
     println(e)
+    if (! expected.equals('generate')) {
+      unstash 'expected_outputs'
+      save_result("cat ${expected}", output_name)
+    }
   }
 }
