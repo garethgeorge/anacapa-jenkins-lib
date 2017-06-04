@@ -233,7 +233,7 @@ def run_test_case(testable, test_case) {
     // save the output for this test case
     def output_name = slugify("${testable.test_name}_${test_case.get('name', test_case['command'])}_output")
     // send stdout to ${output_name} and stderr to ${output_name}_err
-    sh "${test_case.command} 1> ${output_name} 2> ${output_name}_err"
+    def _ret = sh returnStatus: true, script: "${test_case.command} 1> ${output_name} 2> ${output_name}_err"
     // done running student code.
 
     // get the expected outputs folder contents
