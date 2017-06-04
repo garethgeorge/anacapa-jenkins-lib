@@ -150,7 +150,8 @@ def save_temp_result(testable, test_case, score) {
     test_group: testable['test_name'],
     test_name: test_case.get('name', test_case['command']),
     score: score,
-    max_score: test_case['points']
+    max_score: test_case['points'],
+    hide: test_case.get('hide_expected', false)
   ])
 
   unstash "${slugify(testable.test_name)}_results"
@@ -230,7 +231,7 @@ def run_test_case(testable, test_case) {
     unstash 'test_data'
 
     // save the output for this test case
-    def output_name = slugify("${testable.test_name}_${test_case.command}_output")
+    def output_name = slugify("${testable.test_name}_${test_case.get('name', test_case['command'])}_output")
     sh "${test_case.command} > ${output_name}"
     // done running student code.
 
@@ -245,7 +246,7 @@ def run_test_case(testable, test_case) {
       diff_source = output_name
     }
 
-    def diff_cmd = "diff ${output_name} ${solution_file} > ${output_name}.diff"
+    def diff_cmd = "diff -y -W 100 ${solution_file} ${output_name} > ${output_name}.diff"
     def ret = sh returnStatus: true, script: diff_cmd
 
 
