@@ -32,7 +32,7 @@ pipelineJob("AnacapaGrader ${git_provider_domain} ${course_org} assignment-${lab
 
       def evars = [:]
       node {
-        get_envvars this
+        evars = get_envvars this
       }
       runAssignment {
         git_provider_domain = "${evars['git_provider_domain']}"
