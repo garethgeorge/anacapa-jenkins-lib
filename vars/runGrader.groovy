@@ -232,7 +232,8 @@ def run_test_case(testable, test_case) {
 
     // save the output for this test case
     def output_name = slugify("${testable.test_name}_${test_case.get('name', test_case['command'])}_output")
-    sh "${test_case.command} > ${output_name}"
+    // send stdout to ${output_name} and stderr to ${output_name}_err
+    sh "${test_case.command} 1> ${output_name} 2> ${output_name}_err"
     // done running student code.
 
     // get the expected outputs folder contents
@@ -244,9 +245,11 @@ def run_test_case(testable, test_case) {
     def diff_source = test_case.diff_source
     if (diff_source.equals('stdout')) {
       diff_source = output_name
+    } else if (diff_source.equals('stderr')) {
+      diff_source = "${output_name}_err"
     }
 
-    def diff_cmd = "diff -y -W 100 ${solution_file} ${output_name} > ${output_name}.diff"
+    def diff_cmd = "diff -y -W 100 ${solution_file} ${diff_source} > ${output_name}.diff"
     def ret = sh returnStatus: true, script: diff_cmd
 
 
