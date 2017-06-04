@@ -122,14 +122,14 @@ def run_test_group(testable) {
 
 def run_test_case(testable, test_case) {
   def command = test_case.command
+  def expected = test_case['expected'] - ".anacapa/expected_outputs/"
+  def output_name = solution_output_name(testable, test_case)
 
   try {
     // refresh the workspace to facilitate test case independence
     step([$class: 'WsCleanup'])
     unstash name: unstash(testable.test_name)
-    def expected = test_case['expected'] - ".anacapa/expected_outputs/"
     // save the output for this test case
-    def output_name = solution_output_name(testable, test_case)
 
     if (expected.equals('generate')) {
       unstash 'test_data'
