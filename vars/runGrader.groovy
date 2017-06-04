@@ -148,7 +148,7 @@ def temp_results_file_for(name) {
 def save_temp_result(testable, test_case, score) {
   def jstr = jsonString([
     test_group: testable['test_name'],
-    test_name: test_case['command'],
+    test_name: test_case.get('name', test_case['command']),
     score: score,
     max_score: test_case['points']
   ])
