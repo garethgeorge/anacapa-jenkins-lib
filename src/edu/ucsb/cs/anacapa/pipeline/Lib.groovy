@@ -23,7 +23,7 @@ class Lib implements Serializable {
   }
 
   static def slugify(str) {
-    return str.replaceAll("[\\W]+", "-")
+    return str.replaceAll("[\\W]+", "_")
   }
 
   static def get_envvars(script) {
